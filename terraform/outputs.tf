@@ -7,3 +7,7 @@ output "sns_topic_arn" {
   description = "ARN du topic SNS des alertes de securite"
   value       = aws_sns_topic.security_alerts.arn
 }
+output "github_actions_role_arn" {
+  description = "ARN du role IAM utilise par GitHub Actions"
+  value       = aws_iam_role.github_actions.arn
+}
