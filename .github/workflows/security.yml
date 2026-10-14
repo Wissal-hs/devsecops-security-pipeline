@@ -1,5 +1,4 @@
 name: DevSecOps Security Pipeline
-
 on:
   push:
     branches:
@@ -8,10 +7,8 @@ on:
     branches:
       - main
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   gitleaks:
     name: Secret Detection
@@ -21,33 +18,28 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Scan for secrets with Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   checkov:
     name: Terraform Security
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Scan Terraform with Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: terraform
           framework: terraform
           soft_fail: true
-
   trivy:
     name: Vulnerability and Misconfiguration Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Scan repository with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -56,3 +48,15 @@ jobs:
           scanners: vuln,misconfig,secret
           format: table
           exit-code: '0'
+  prowler-iac:
+    name: Prowler IaC Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Scan Infrastructure as Code with Prowler
+        uses: prowler-cloud/prowler@5.25
+        with:
+          provider: iac
+          output-formats: json-ocsf
+          flags: --severity critical high
