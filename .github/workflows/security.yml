@@ -55,7 +55,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Scan Infrastructure as Code with Prowler
-        uses: prowler-cloud/prowler@5.25
+        uses: prowler-cloud/prowler@5.44.0
         with:
           provider: iac
           output-formats: json-ocsf
