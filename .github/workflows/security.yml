@@ -105,3 +105,32 @@ jobs:
             );
             core.info('OIDC sub: ' + payload.sub);
             core.info('OIDC aud: ' + payload.aud);
+
+  upload-reports:
+    name: Generate and Upload Reports to S3
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          format: json
+          output: trivy-report.json
+          exit-code: '0'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: eu-west-3
+
+      - name: Upload report to S3
+        run: |
+          aws s3 cp trivy-report.json \
+            s3://${{ secrets.REPORTS_BUCKET }}/reports/${{ github.run_id }}/trivy-report.json
