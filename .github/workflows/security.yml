@@ -134,3 +134,11 @@ jobs:
         run: |
           aws s3 cp trivy-report.json \
             s3://${{ secrets.REPORTS_BUCKET }}/reports/${{ github.run_id }}/trivy-report.json
+
+      - name: Send SNS test alert
+        run: |
+          aws sns publish \
+            --region eu-west-3 \
+            --topic-arn "${{ secrets.SNS_TOPIC_ARN }}" \
+            --subject "DevSecOps Pipeline - Test" \
+            --message "Pipeline termine. Rapport disponible dans S3, run ${{ github.run_id }}."
