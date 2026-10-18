@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "github_actions_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:Wissal-hs/devsecops-security-pipeline:ref:refs/heads/main"]
+     values   = ["repo:Wissal-hs@284564733/devsecops-security-pipeline@1418086681:ref:refs/heads/main"]
     }
   }
 }
